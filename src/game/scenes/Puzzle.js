@@ -209,21 +209,21 @@ console.log("Actual tile display size:", tile.displayWidth, tile.displayHeight);
     });
 
     // Test button (below help button)
-    const test = this.add.rectangle(buttonX, buttonY + 140, buttonWidth, buttonHeight, 0x60a0f0)
-      .setInteractive({ useHandCursor: true })
-      .setStrokeStyle(2, 0x305080);
+    // const test = this.add.rectangle(buttonX, buttonY + 140, buttonWidth, buttonHeight, 0x60a0f0)
+    //   .setInteractive({ useHandCursor: true })
+    //   .setStrokeStyle(2, 0x305080);
 
-    this.add.text(buttonX, buttonY + 140, "Tes", {
-      fontFamily: "Arial",
-      fontSize: "20px",
-      color: "#ffffff",
-      fontStyle: "bold"
-    }).setOrigin(0.5);
+    // this.add.text(buttonX, buttonY + 140, "Tes", {
+    //   fontFamily: "Arial",
+    //   fontSize: "20px",
+    //   color: "#ffffff",
+    //   fontStyle: "bold"
+    // }).setOrigin(0.5);
 
-    test.on('pointerdown', () => {  
-      clickSound.play()
-      this.sound.stopByKey('puz') 
-      this.scene.start('TekaTeki')});
+    // test.on('pointerdown', () => {  
+    //   clickSound.play()
+    //   this.sound.stopByKey('puz') 
+    //   this.scene.start('TekaTeki')});
 
     // Drag Events
     this.input.on("dragstart", (pointer, gameObject) => {
