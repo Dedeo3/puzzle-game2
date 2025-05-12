@@ -86,22 +86,12 @@ export class PreparationScene extends Phaser.Scene {
           isBgmPlaying = false;
         }
 
-        currentMedia = this.add.video(width / 2, height / 2, '2')
+        currentMedia = this.add.video(width / 2, height * 0.45, '2')
           .setOrigin(0.5)
           .on('play', function () {
-            const videoRatio = currentMedia.video.videoWidth / currentMedia.video.videoHeight;
-            const targetWidth = width * 0.6;
-            const targetHeight = height * 0.6;
-            const targetRatio = targetWidth / targetHeight;
-
-            if (videoRatio > targetRatio) {
-              currentMedia.displayWidth = targetWidth;
-              currentMedia.displayHeight = targetWidth / videoRatio;
-            } else {
-              currentMedia.displayHeight = targetHeight;
-              currentMedia.displayWidth = targetHeight * videoRatio;
-            }
+            currentMedia.setDisplaySize(width * 0.6, height * 0.6);
           });
+
 
         currentMedia.play(true);
       } else {

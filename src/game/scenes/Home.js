@@ -98,6 +98,7 @@ export class Home extends Scene {
         buttonBg.lineStyle(2, 0xffffff, 1);
         buttonBg.strokeRoundedRect(centerX - 70, centerY + 40, 140, 50, 15);
         
+        
         // Button element using DOM
         const buttonElement = document.createElement('button');
         buttonElement.innerText = 'START GAME';
@@ -111,6 +112,7 @@ export class Home extends Scene {
         buttonElement.style.borderRadius = '10px';
         buttonElement.style.cursor = 'pointer';
         buttonElement.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.3)';
+
         
         // Add button to DOM
         const button = this.add.dom(centerX, centerY + 65, buttonElement);

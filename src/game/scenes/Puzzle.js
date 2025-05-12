@@ -56,6 +56,7 @@ export class Puzzle extends Scene {
     const startY = (height - tileSize * gridSize) / 2 + height * 0.05;
 
     this.tileSize = tileSize;
+    
     this.startX = startX;
     this.startY = startY;
 
@@ -208,23 +209,6 @@ console.log("Actual tile display size:", tile.displayWidth, tile.displayHeight);
       this.showHelp()
     });
 
-    // Test button (below help button)
-    // const test = this.add.rectangle(buttonX, buttonY + 140, buttonWidth, buttonHeight, 0x60a0f0)
-    //   .setInteractive({ useHandCursor: true })
-    //   .setStrokeStyle(2, 0x305080);
-
-    // this.add.text(buttonX, buttonY + 140, "Tes", {
-    //   fontFamily: "Arial",
-    //   fontSize: "20px",
-    //   color: "#ffffff",
-    //   fontStyle: "bold"
-    // }).setOrigin(0.5);
-
-    // test.on('pointerdown', () => {  
-    //   clickSound.play()
-    //   this.sound.stopByKey('puz') 
-    //   this.scene.start('TekaTeki')});
-
     // Drag Events
     this.input.on("dragstart", (pointer, gameObject) => {
       gameObject.setAlpha(0.7);
@@ -242,7 +226,12 @@ console.log("Actual tile display size:", tile.displayWidth, tile.displayHeight);
       const dx = Math.abs(col - this.emptyPos.col);
       const dy = Math.abs(row - this.emptyPos.row);
 
-      if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+      this.input.on("dragend", (pointer, gameObject) => {
+        gameObject.setAlpha(1);
+
+        const { row, col } = gameObject.gridPos;
+
+        // Posisi target (kotak kosong)
         const newX = this.getTileX(this.emptyPos.col);
         const newY = this.getTileY(this.emptyPos.row);
 
@@ -253,11 +242,10 @@ console.log("Actual tile display size:", tile.displayWidth, tile.displayHeight);
         this.grid[oldEmpty.row][oldEmpty.col] = gameObject;
         this.grid[this.emptyPos.row][this.emptyPos.col] = null;
 
-        // Update the empty tile position
+        // Update posisi tile kosong
         emptyTile.x = this.getTileX(this.emptyPos.col);
         emptyTile.y = this.getTileY(this.emptyPos.row);
 
-        // Play sound
         this.sound.play('swipe', {
           volume: 6
         });
@@ -269,18 +257,48 @@ console.log("Actual tile display size:", tile.displayWidth, tile.displayHeight);
           duration: 200,
           ease: 'Power2'
         });
-      } else {
-        const backX = this.getTileX(col);
-        const backY = this.getTileY(row);
+      });
 
-        this.tweens.add({
-          targets: gameObject,
-          x: backX,
-          y: backY,
-          duration: 200,
-          ease: 'Power2'
-        });
-      }
+
+      // if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+      //   const newX = this.getTileX(this.emptyPos.col);
+      //   const newY = this.getTileY(this.emptyPos.row);
+
+      //   const oldEmpty = { ...this.emptyPos };
+      //   this.emptyPos = { ...gameObject.gridPos };
+      //   gameObject.gridPos = { ...oldEmpty };
+
+      //   this.grid[oldEmpty.row][oldEmpty.col] = gameObject;
+      //   this.grid[this.emptyPos.row][this.emptyPos.col] = null;
+
+      //   // Update the empty tile position
+      //   emptyTile.x = this.getTileX(this.emptyPos.col);
+      //   emptyTile.y = this.getTileY(this.emptyPos.row);
+
+      //   // Play sound
+      //   this.sound.play('swipe', {
+      //     volume: 6
+      //   });
+
+      //   this.tweens.add({
+      //     targets: gameObject,
+      //     x: newX,
+      //     y: newY,
+      //     duration: 200,
+      //     ease: 'Power2'
+      //   });
+      // } else {
+      //   const backX = this.getTileX(col);
+      //   const backY = this.getTileY(row);
+
+      //   this.tweens.add({
+      //     targets: gameObject,
+      //     x: backX,
+      //     y: backY,
+      //     duration: 200,
+      //     ease: 'Power2'
+      //   });
+      // }
     });
   }
 
@@ -292,7 +310,7 @@ console.log("Actual tile display size:", tile.displayWidth, tile.displayHeight);
     const overlay = this.add.rectangle(width / 2, height / 2, width * 0.8, height * 0.6, 0x000000, 0.8).setDepth(20);
   
     const helpText = this.add.text(width / 2, height / 2 - 40,
-      "🎯 Tujuan:\nSusun potongan-potongan gambar hingga membentuk gambar utuh.\n\n🕹️ Cara Bermain:\nGeser ubin ke arah ruang kosong di sampingnya.\nUlangi sampai semua ubin berada di posisi semestinya.\n\n💡 Tips:\nMulai dari baris atas lalu susun ke bawah.",
+      "🎯 Tujuan:\nSusun potongan-potongan gambar hingga membentuk gambar utuh.\n\n🕹️ Cara Bermain:\nGeser ubin ke arah ruang kosong.\nUlangi sampai semua ubin berada di posisi semestinya.\n\n💡 Tips:\nMulai dari baris atas lalu susun ke bawah.",
       {
         fontFamily: "Arial",
         fontSize: "18px",
