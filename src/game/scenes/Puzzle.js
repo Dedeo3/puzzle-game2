@@ -10,7 +10,8 @@ export class Puzzle extends Scene {
   }
 
   preload() {
-    this.load.image("puzzle", "assets/paru_.jpeg");
+    this.load.image("puzzle", "assets/paruu.jpg");
+    this.load.image("background", "assets/bgPuz.jpg");
     this.load.audio('puz','music/puz.mp3')
     this.load.audio("klik",'music/klik.wav')
     this.load.audio("swipe",'music/swipe.mp3')
@@ -26,13 +27,13 @@ export class Puzzle extends Scene {
     const height = this.scale.height;
 
     // Background
-    this.add.rectangle(width / 2, height / 2, width, height, 0xa52a2a).setDepth(-1);
+    this.add.image(width / 2, height / 2, "background").setDisplaySize(width, height).setDepth(-1);
 
     // Timer
     this.timeText = this.add.text(width / 2, height * 0.05, "Time: 00:00", {
       fontFamily: "Arial",
       fontSize: `${Math.floor(height * 0.05)}px`,
-      color: "#ffffff",
+      color: "#FFC000",
       fontStyle: "bold",
     }).setOrigin(0.5);
 
@@ -108,19 +109,36 @@ export class Puzzle extends Scene {
         const x = this.getTileX(shuffledPos.col);
         const y = this.getTileY(shuffledPos.row);
 
-        const container = this.add.container(x, y);
+       const container = this.add.container(x, y)
+  .setSize(tileSize, tileSize)
+  .setInteractive(new Phaser.Geom.Rectangle(0, 0, tileSize, tileSize), Phaser.Geom.Rectangle.Contains);
+        // Create a background rectangle for each tile to cover the blue area
+        const tileBackground = this.add.rectangle(0, 0, tileSize, tileSize).setOrigin(0.5);
+        container.add(tileBackground);
         
+        // Add the puzzle piece image - now it will fill the entire tile space
+        // Ganti bagian pembuatan tile dengan ini:
+        // Ganti bagian pembuatan tile dengan ini:
         const tile = this.add.image(0, 0, "puzzle")
-          .setCrop(
-            origCol * cropWidth,
-            origRow * cropHeight,
-            cropWidth,
-            cropHeight
-          )
-          .setDisplaySize(tileSize, tileSize);
+  .setCrop(
+    origCol * cropWidth,
+    origRow * cropHeight,
+    cropWidth,
+    cropHeight
+  )
+  .setDisplaySize(tileSize, tileSize)  // Ini akan memaksa gambar sesuai ukuran tile
+  .setOrigin(0.5);
+
+// Debugging - tampilkan ukuran aktual
+console.log("Actual tile display size:", tile.displayWidth, tile.displayHeight);
+
+          console.log("Image dimensions:", imageWidth, imageHeight);
+          console.log("Crop dimensions:", cropWidth, cropHeight);
+          console.log("Tile size:", tileSize);
         
         container.add(tile);
         
+        // Add a border to each tile
         const border = this.add.rectangle(0, 0, tileSize, tileSize, 0x000000, 0)
           .setStrokeStyle(1, 0xffffff);
         container.add(border);
@@ -137,6 +155,15 @@ export class Puzzle extends Scene {
       }
     }
 
+    // Create a background rectangle for the empty tile (to hide the blue)
+    const emptyTile = this.add.rectangle(
+      this.getTileX(this.emptyPos.col),
+      this.getTileY(this.emptyPos.row),
+      this.tileSize,
+      this.tileSize,
+      0xFFFFFF
+    );
+
     // Calculate button positions (right side of puzzle)
     const buttonWidth = 200;
     const buttonHeight = 50;
@@ -144,19 +171,19 @@ export class Puzzle extends Scene {
     const buttonY = startY + tileSize * gridSize / 2 - buttonHeight; // Center vertically
 
     // Check result button
-    const checkButton = this.add.rectangle(buttonX, buttonY, buttonWidth, buttonHeight, 0xf0a060)
+    const checkButton = this.add.rectangle(buttonX, buttonY, buttonWidth, buttonHeight, 0xff9800)
       .setInteractive({ useHandCursor: true })
       .setStrokeStyle(2, 0xc87030);
 
     this.add.text(buttonX, buttonY, "Check result", {
       fontFamily: "Arial",
       fontSize: "20px",
-      color: "#703010",
+      color: "#ffffff",
       fontStyle: "bold"
     }).setOrigin(0.5);
 
     checkButton.on('pointerover', () => checkButton.setFillStyle(0xffb070));
-    checkButton.on('pointerout', () => checkButton.setFillStyle(0xf0a060));
+    checkButton.on('pointerout', () => checkButton.setFillStyle(0xff9800));
     checkButton.on('pointerdown', () => {
       clickSound.play()
       this.checkWin()
@@ -226,10 +253,14 @@ export class Puzzle extends Scene {
         this.grid[oldEmpty.row][oldEmpty.col] = gameObject;
         this.grid[this.emptyPos.row][this.emptyPos.col] = null;
 
-          // >>> PUT THIS LINE HERE TO PLAY SOUND <<<
-         this.sound.play('swipe',{
-          volume:6
-         }); // Suara pergerakan ubin
+        // Update the empty tile position
+        emptyTile.x = this.getTileX(this.emptyPos.col);
+        emptyTile.y = this.getTileY(this.emptyPos.row);
+
+        // Play sound
+        this.sound.play('swipe', {
+          volume: 6
+        });
 
         this.tweens.add({
           targets: gameObject,
